@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ClimaHealth Agent</title>
+</head>
+<body>
+    <h1>ClimaHealth Agent 🌿</h1>
+    <input id="city" placeholder="Enter city"/>
+    <input id="condition" placeholder="Enter your health condition"/>
+    <button onclick="checkSafety()">Check Climate Safety</button>
+    <p id="advice"></p>
+    <hr>
+    <input id="chat" placeholder="Ask a question"/>
+    <button onclick="askChatbot()">Ask Chatbot</button>
+    <p id="chatresponse"></p>
+
+    <script>
+        async function checkSafety() {
+            let city = document.getElementById("city").value;
+            let condition = document.getElementById("condition").value;
+            const weather = await fetch(`/api/weather?city=${city}`).then(r=>r.json());
+            const advice = await fetch(`/api/agentic_advice?condition=${condition}&temperature=${weather.temperature}&humidity=${weather.humidity}&weather=${weather.condition}`).then(r=>r.json());
+            document.getElementById("advice").innerText = advice.advice + " | Reasons: " + advice.reasons.join(", ");
+        }
+
+        async function askChatbot() {
+            let query = document.getElementById("chat").value;
+            const response = await fetch(`/api/chatbot?query=${query}`).then(r=>r.json());
+            document.getElementById("chatresponse").innerText = response.response;
+        }
+    </script>
+</body>
+</html>
